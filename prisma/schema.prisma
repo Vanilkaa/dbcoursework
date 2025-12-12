@@ -1,0 +1,90 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Order {
+  order_id         Int         @id @default(autoincrement())
+  customer_id      Int
+  orderdate        DateTime?   @default(now()) @db.Timestamp(6)
+  totalorderamount Decimal     @db.Decimal(10, 2)
+  customer         customer    @relation(fields: [customer_id], references: [customer_id], onUpdate: NoAction)
+  orderitem        orderitem[]
+  payment          payment?
+}
+
+model customer {
+  customer_id  Int            @id @default(autoincrement())
+  name         String         @db.VarChar(255)
+  email        String         @unique @db.VarChar(255)
+  Order        Order[]
+  shoppingcart shoppingcart[]
+}
+
+model orderitem {
+  orderitem_id Int     @id @default(autoincrement())
+  order_id     Int
+  product_id   Int
+  quantity     Int
+  unitprice    Decimal @db.Decimal(10, 2)
+  Order        Order   @relation(fields: [order_id], references: [order_id], onDelete: Cascade, onUpdate: NoAction)
+  product      product @relation(fields: [product_id], references: [product_id], onUpdate: NoAction)
+}
+
+model payment {
+  payment_id  Int       @id @default(autoincrement())
+  order_id    Int       @unique
+  amount      Decimal   @db.Decimal(10, 2)
+  method      String?   @db.VarChar(50)
+  paymentdate DateTime? @default(now()) @db.Timestamp(6)
+  Order       Order     @relation(fields: [order_id], references: [order_id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model product {
+  product_id       Int                @id @default(autoincrement())
+  category_id      Int
+  name             String             @db.VarChar(255)
+  description      String?
+  currentprice     Decimal            @db.Decimal(10, 2)
+  orderitem        orderitem[]
+  productcategory  productcategory    @relation(fields: [category_id], references: [category_id], onDelete: SetNull, onUpdate: NoAction)
+  shoppingcartitem shoppingcartitem[]
+  reviews          Review[]
+}
+
+model productcategory {
+  category_id Int       @id @default(autoincrement())
+  name        String    @db.VarChar(255)
+  description String?
+  product     product[]
+}
+
+model shoppingcart {
+  cart_id          Int                @id @default(autoincrement())
+  customer_id      Int
+  createddate      DateTime?          @default(now()) @db.Timestamp(6)
+  customer         customer           @relation(fields: [customer_id], references: [customer_id], onDelete: Cascade, onUpdate: NoAction)
+  shoppingcartitem shoppingcartitem[]
+}
+
+model shoppingcartitem {
+  cartitem_id  Int          @id @default(autoincrement())
+  cart_id      Int
+  product_id   Int
+  quantity     Int          @default(1)
+  shoppingcart shoppingcart @relation(fields: [cart_id], references: [cart_id], onDelete: Cascade, onUpdate: NoAction)
+  product      product      @relation(fields: [product_id], references: [product_id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model Review {
+  review_id  Int     @id @default(autoincrement())
+  rating     Int
+  product    product @relation(fields: [product_id], references: [product_id])
+  product_id Int
+  reviewDate DateTime @default(now())
+}

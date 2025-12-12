@@ -1,0 +1,27 @@
+{
+  "name": "dbcoursework",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Vanilkaa/dbcoursework.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Vanilkaa/dbcoursework/issues"
+  },
+  "homepage": "https://github.com/Vanilkaa/dbcoursework#readme",
+  "devDependencies": {
+    "prisma": "^7.1.0"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.3"
+  }
+}
